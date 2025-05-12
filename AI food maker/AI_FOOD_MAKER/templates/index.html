@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Food Maker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>🍽️ AI Food Maker 🚀</h1>
+        <input type="text" id="food_name" placeholder="Enter a food name...">
+        <button onclick="getFoodDetails()">Get Details</button>
+
+        <div id="loading" style="display:none;">⏳ Fetching details...</div>
+        <div id="result"></div>
+    </div>
+    <p>      </p>
+        <div class="container">
+        <ol> 
+            <li>Tea 🍵</li>
+            <li>Coffee ☕</li>
+            <li>Juice 🧃</li>
+            
+            <h3><b>Snacks</b></h3>
+            <li>Samosa 🥟</li>
+            <li>Kachori 🥠</li>
+            <li>Churros 🍩</li>
+            <li>Falafel 🧆</li>
+            <li>Poutine 🍟</li>
+            <li>Corn Dog 🌽</li>
+            <li>Macarons 🍪</li>
+        
+            <h3><b>Indian Foods</b></h3>
+            <li>Dal Tadka 🥣</li>
+            <li>Paneer Butter Masala 🧈</li>
+            <li>Tandoori Chicken 🍗</li>
+            <li>Idli 🥞</li>
+            <li>Dosa 🥞</li>
+            <li>Chole Bhature 🍽️</li>
+            <li>Pav Bhaji 🍲</li>
+            <li>Rajma Chawal 🍛</li>
+            <li>Butter Naan 🫓</li>
+            <li>Rasgulla 🍥</li>
+            <li>Malai Kofta 🧆</li>
+            <li>Sheer Kurma 🥛</li>
+            <li>Jalebi 🍯</li>
+            <li>Gajar Ka Halwa 🥕</li>
+            <li>Biryani 🍛</li>
+            <li>Gulab Jamun 🍩</li>
+        
+            <h3><b>Main Dishes</b></h3>
+            <li>Pasta 🍝</li>
+            <li>Pizza 🍕</li>
+            <li>Lasagna 🧀</li>
+            <li>Fried Rice 🍚</li>
+            <li>Burger 🍔</li>
+            <li>Shawarma 🌯</li>
+            <li>Tacos 🌮</li>
+            <li>Omelette 🍳</li>
+            <li>Pho 🍜</li>
+            <li>Ramen 🍜</li>
+            <li>Pad Thai 🍜</li>
+            <li>Arepa 🫓</li>
+            <li>Samosa Chaat 🥙</li>
+        
+            <h3><b>Beverages</b></h3>
+            <li>Smoothie 🥤</li>
+            <li>Bubble Tea 🧋</li>
+            <li>Miso Soup 🍲</li>
+        
+            <h3><b>Desserts</b></h3>
+            <li>Baklava 🍯</li>
+            <li>Tiramisu 🍰</li>
+            <li>Ceviche 🐟</li>
+        </ol>
+        
+        </ol>
+        
+    </div>
+    <div class="emoji-container"></div>
+
+    <script>
+        function createEmoji() {
+            const emojiList = ["🍕", "🍔", "🍩", "🍜", "🍎", "🍣", "🍰", "🍹"];
+            const emojiContainer = document.querySelector(".emoji-container");
+            
+            const emoji = document.createElement("div");
+            emoji.className = "emoji";
+            emoji.innerText = emojiList[Math.floor(Math.random() * emojiList.length)];
+            
+            // Random position & animation delay
+            emoji.style.left = Math.random() * 100 + "vw";
+            emoji.style.animationDuration = (Math.random() * 3 + 3) + "s"; // 3-6 sec
+            emoji.style.opacity = Math.random();
+    
+            emojiContainer.appendChild(emoji);
+    
+            setTimeout(() => {
+                emoji.remove(); // Remove emoji after animation
+            }, 5000);
+        }
+    
+        setInterval(createEmoji, 400);
+        function getFoodDetails() {
+            let foodName = document.getElementById("food_name").value;
+            let resultDiv = document.getElementById("result");
+    
+            // Show a funny loading message 🤣
+            resultDiv.innerHTML = "<p>🍽️ Fetching yummy details... ⏳🤤</p>";
+    
+            fetch("/get_food_details", {
+                method: "POST",
+                body: new URLSearchParams({ "food_name": foodName }),
+                headers: { "Content-Type": "application/x-www-form-urlencoded" }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Convert YouTube link to embeddable format
+                let videoId = data.youtube_link.split("v=")[1];
+                let embedUrl = `https://www.youtube.com/embed/${videoId}`;
+    
+                resultDiv.innerHTML = `
+                    <p><strong>🥗 Ingredients:</strong> ${data.ingredients}</p>
+                    <p><strong>📜 Instructions:</strong> ${data.instructions}</p>
+                    <p><strong>📹 Recipe Video:</strong> <a href="${data.youtube_link}" target="_blank">Watch on YouTube</a></p>                `;
+            })
+            .catch(error => {
+                resultDiv.innerHTML = "<p>❌ Oops! Couldn't fetch details. 😢 Try again!</p>";
+            });
+        }
+    </script> 
+</body>
+</html>
